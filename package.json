@@ -1,0 +1,22 @@
+{
+  "name": "cooking-blog",
+  "version": "1.0.0",
+  "description": "This Cooking Blog was created to help us to save our own receipe",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NguyenVuNhan/cooking-blog.git"
+  },
+  "keywords": [
+    "cooking-blog"
+  ],
+  "author": "Nhan Nguyen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NguyenVuNhan/cooking-blog/issues"
+  },
+  "homepage": "https://github.com/NguyenVuNhan/cooking-blog#readme"
+}
