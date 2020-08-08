@@ -9,6 +9,8 @@
 		"server": "nodemon server.js",
 		"client": "npm start --prefix client",
 		"native": "npm start --prefix client-native",
+		"dev-web": "concurrently \"npm run server\" \"npm run client\"",
+		"dev-native": "concurrently \"npm run server\" \"npm run native\"",
 		"dev": "concurrently \"npm run server\" \"npm run client\" \"npm run native\""
 	},
 	"repository": {
@@ -35,6 +37,7 @@
 		"gravatar": "^1.8.1",
 		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^5.9.28",
+		"mongoose-paginate": "^5.0.3",
 		"passport": "^0.4.1",
 		"passport-jwt": "^4.0.0",
 		"validator": "^13.1.1"

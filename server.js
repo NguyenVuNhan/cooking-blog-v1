@@ -4,6 +4,10 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const path = require("path");
 
+// import routes
+const users = require("./routes/api/users");
+
+// Create express app
 const app = express();
 
 // Body-parser Middleware
@@ -11,8 +15,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Passport Middleware
-// app.use(passport.initialize());
-// require("./config/passport")(passport);
+app.use(passport.initialize());
+require("./config/passport")(passport);
 
 // Database conection
 const db = require("./config/keys").mongoUrl;
@@ -24,10 +28,13 @@ mongoose
 	.then(() => console.log("Database Connected"))
 	.catch(err => console.log(err));
 
-// Routes
+// Test api
 app.get("/test", (req, res) => {
 	res.send("Cooking Blog test");
 });
+
+// Routes
+app.use("/api/users", users);
 
 // Server static
 if (process.env.NODE_ENV === "production") {
