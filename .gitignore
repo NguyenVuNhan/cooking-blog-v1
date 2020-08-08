@@ -1,4 +1,19 @@
-/config/key.dev.js
-/node_modules
+# Required
 package-lock.json
+node_modules/
+build/
 
+# React native ignore
+web-build/
+.expo-shared/
+.expo/
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Local file
+config/key.dev.js
