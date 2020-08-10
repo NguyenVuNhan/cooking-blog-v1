@@ -7,10 +7,10 @@ const keys = require("../../config/keys");
 const passport = require("passport");
 
 // Load validators
-const validateRegisterInput = require("../../validations/register");
-const validateLoginInput = require("../../validations/login");
-const validatePasswordChangeInput = require("../../validations/passwordChange");
-const validateEmailChangeInput = require("../../validations/emailChange");
+const validateRegisterInput = require("../../validations/userRegister");
+const validateLoginInput = require("../../validations/userLogin");
+const validatePasswordChangeInput = require("../../validations/userPasswordChange");
+const validateEmailChangeInput = require("../../validations/userEmailChange");
 
 // Load models
 const User = require("../../models/User");
@@ -20,37 +20,33 @@ const User = require("../../models/User");
 // @access	Public
 router.get("/recipes", (req, res) => {
 	const { userid, username, page, limit } = req.query;
+	let query;
 
 	if (userid) {
-		User.findById(userid).exec((err, user) => {
-			if (err) {
-				return res.status(400).json({
-					findUserError: "Unexpected error when find user with id",
-					err
-				});
-			} else {
-				return res.json(user.recipes);
-			}
-		});
+		query = User.findById(userid);
 	} else if (username) {
-		User.findOne({ name: { $regex: username, $options: "i" } }).exec(
-			(err, user) => {
-				if (err) {
-					return res.status(400).json({
-						findUserError:
-							"Unexpected error when find user with name",
-						err
-					});
-				} else {
-					return res.json(user.recipes);
-				}
-			}
-		);
+		query = User.findOne({ name: { $regex: username, $options: "i" } });
 	} else {
 		return res.status(400).json({
 			noQuery: "Expected userid or username"
 		});
 	}
+
+	query
+		.then(user => {
+			if (!user) {
+				return res
+					.status(404)
+					.json({ findUserError: "User not found" });
+			}
+			res.json(user.recipes);
+		})
+		.catch(errors =>
+			res.status(400).json({
+				findUserError: "Unexpected error when find user",
+				errors
+			})
+		);
 });
 
 // @route 	POST api/users/email
@@ -69,31 +65,18 @@ router.post(
 
 		User.findByIdAndUpdate(
 			req.user.id,
-			{
-				$set: {
-					email
-				}
-			},
-			{
-				new: true,
-				useFindAndModify: false
-			},
-			(err, updatedUser) => {
-				if (err) {
-					return res.json({
-						updateEmailError: "Unexpected error when update email",
-						err
-					});
-				} else {
-					res.json({ success: true });
-				}
-			}
-		).catch(err =>
-			res.status(404).json({
-				noPostFound: "No user found",
-				err
+			{ $set: { email } },
+			{ new: true, useFindAndModify: false }
+		)
+			.then(updatedUser => {
+				res.json({ updatedUser, success: true });
 			})
-		);
+			.catch(errors =>
+				res.status(404).json({
+					noUserFound: "Unexpected error when update email",
+					errors
+				})
+			);
 	}
 );
 
@@ -122,32 +105,17 @@ router.post(
 						// Update new password
 						User.findByIdAndUpdate(
 							req.user.id,
-							{
-								$set: {
-									password: hash
-								}
-							},
-							{
-								new: true,
-								useFindAndModify: false
-							},
-							(err, updatedUser) => {
-								if (err) {
-									return res.json({
-										updatePasswordError:
-											"Unexpected error when update password",
-										err
-									});
-								} else {
-									res.json({ success: true });
-								}
-							}
-						).catch(err =>
-							res.status(404).json({
-								noPostFound: "No user found",
-								err
-							})
-						);
+							{ $set: { password: hash } },
+							{ new: true, useFindAndModify: false }
+						)
+							.then(user => res.json({ user, success: true }))
+							.catch(errors =>
+								res.json({
+									updatePasswordError:
+										"Unable to find this user",
+									errors
+								})
+							);
 					});
 				});
 			} else {
@@ -165,27 +133,14 @@ router.delete(
 	"/",
 	passport.authenticate("jwt", { session: false }),
 	(req, res) => {
-		User.findByIdAndRemove(
-			req.user.id,
-			{
-				useFindAndModify: false
-			},
-			(err, deleteVideo) => {
-				if (err) {
-					return res.status(400).json({
-						deleteUserError: "Unexpected error when delete user",
-						err
-					});
-				} else {
-					res.json({ success: true });
-				}
-			}
-		).catch(err =>
-			res.status(404).json({
-				noPostFound: "No user found",
-				err
-			})
-		);
+		User.findByIdAndRemove(req.user.id, { useFindAndModify: false })
+			.then(deleteUser => res.json({ deleteUser, success: true }))
+			.catch(errors =>
+				res.status(404).json({
+					noUserFound: "Unable to find this user",
+					errors
+				})
+			);
 	}
 );
 
@@ -287,7 +242,13 @@ router.post("/register", (req, res) => {
 					newUser
 						.save()
 						.then(user => res.json(user))
-						.catch(err => console.log(err));
+						.catch(errors =>
+							console.log({
+								addUserErrors:
+									"Unexpected error while save user",
+								errors
+							})
+						);
 				});
 			});
 		}

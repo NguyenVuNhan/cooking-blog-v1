@@ -16,4 +16,4 @@ npm-debug.*
 *.orig.*
 
 # Local file
-config/key.dev.js
+config/keys.dev.js

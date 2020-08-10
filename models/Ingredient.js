@@ -7,9 +7,15 @@ const IngredientSchema = new Schema({
 		type: Schema.Types.String,
 		required: true
 	},
-	picture: {
-		type: Schema.Types.String,
-		required: false
+	image: {
+		link: {
+			type: Schema.Types.String,
+			required: true
+		},
+		deleteHash: {
+			type: Schema.Types.String,
+			required: true
+		}
 	},
 	recipes: [
 		{

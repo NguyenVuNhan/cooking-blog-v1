@@ -4,9 +4,6 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const path = require("path");
 
-// import routes
-const users = require("./routes/api/users");
-
 // Create express app
 const app = express();
 
@@ -26,15 +23,10 @@ mongoose
 		useUnifiedTopology: true
 	})
 	.then(() => console.log("Database Connected"))
-	.catch(err => console.log(err));
+	.catch(errors => console.log(errors));
 
-// Test api
-app.get("/test", (req, res) => {
-	res.send("Cooking Blog test");
-});
-
-// Routes
-app.use("/api/users", users);
+// Apply routes
+require("./routes/routes")(app);
 
 // Server static
 if (process.env.NODE_ENV === "production") {

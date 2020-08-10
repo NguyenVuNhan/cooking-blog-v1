@@ -24,9 +24,15 @@ const RecipeSchema = new Schema({
 			}
 		}
 	],
-	picture: {
-		type: Schema.Types.String,
-		required: false
+	image: {
+		link: {
+			type: Schema.Types.String,
+			required: true
+		},
+		deleteHash: {
+			type: Schema.Types.String,
+			required: true
+		}
 	},
 	duration: {
 		type: Schema.Types.Number,
@@ -43,9 +49,15 @@ const RecipeSchema = new Schema({
 				required: false,
 				default: -1
 			},
-			picture: {
-				type: Schema.Types.String,
-				required: false
+			image: {
+				link: {
+					type: Schema.Types.String,
+					required: true
+				},
+				deleteHash: {
+					type: Schema.Types.String,
+					required: true
+				}
 			}
 		}
 	]
