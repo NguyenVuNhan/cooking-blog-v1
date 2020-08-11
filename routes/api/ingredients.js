@@ -13,75 +13,83 @@ const {
 
 // Load validation
 const isEmpty = require("../../validations/is-empty");
-const validateAddMealInput = require("../../validations/mealAdd.js");
-const validateMealUpdateInput = require("../../validations/mealUpdate.js");
+const validateAddIngredientInput = require("../../validations/ingredientAdd");
+const validateIngredientUpdateInput = require("../../validations/ingredientUpdate");
 
 // Load models
-const Meal = require("../../models/Meal");
+const Ingredient = require("../../models/Ingredient");
 
-// @route 	GET api/meals/meal?mealid=&mealname=
-// @desc  	Get meal by id or name
+// @route 	GET api/ingredients/test
+// @desc  	Tests route
 // @access	Public
-router.get("/meal", (req, res) => {
-	const { mealid, mealname } = req.query;
+router.get("/test", (req, res) => res.json({ msg: "ingredients works" }));
+
+// @route 	GET api/ingredients/ingredient?id=&name=
+// @desc  	Get ingredient by id or name
+// @access	Public
+router.get("/ingredient", (req, res) => {
+	const { id, name } = req.query;
 	let query;
 
-	if (mealid) {
-		query = Meal.findById(mealid, {
-			_id: 0,
+	if (id) {
+		query = Ingredient.findById(id, {
 			name: 1,
 			"image.link": 1,
 			recipes: 1
 		});
-	} else if (mealname) {
-		query = Meal.findOne(
-			{ name: { $regex: mealname, $options: "i" } },
-			{ _id: 0, name: 1, "image.link": 1, recipes: 1 }
+	} else if (name) {
+		query = Ingredient.findOne(
+			{ name: { $regex: name, $options: "i" } },
+			{ name: 1, "image.link": 1, recipes: 1 }
 		);
 	} else {
 		return res.status(400).json({
-			noQuery: "Expected userid or username"
+			error: "Expected id or name",
+			success: false
 		});
 	}
 
 	query
-		.then(meal => {
-			if (!meal) {
-				return res.status(404).json({ getMealError: "Meal not found" });
-			}
-			res.json(meal);
-		})
-		.catch(errors =>
-			res.status(400).json({
-				getMealError: "Unexpected error when find meal",
-				errors
-			})
-		);
-});
-
-// @route 	GET api/meals/all
-// @desc  	Get all available meal
-// @access	Public
-router.get("/all", (req, res) => {
-	Meal.find({}, { _id: 0, name: 1, "image.link": 1, recipes: 1 })
-		.then(meals => {
-			if (!meals) {
+		.then(ingredient => {
+			if (!ingredient) {
 				return res
 					.status(404)
-					.json({ noMealFound: "There are no meal" });
+					.json({ error: "Meal not found", success: false });
 			}
-			res.json(meals);
+			res.json({ ingredient, success: true });
 		})
-		.catch(errors =>
+		.catch(err =>
 			res.status(400).json({
-				getMealError: "Unexpected error while get meal",
-				errors
+				error: "Unexpected error when find meal",
+				success: false
 			})
 		);
 });
 
-// @route 	POST api/meals/:id
-// @desc  	Update Meal with deletehash
+// @route 	GET api/ingredients/all
+// @desc  	Get all available ingredients
+// @access	Public
+router.get("/all", (req, res) => {
+	Ingredient.find({}, { name: 1, "image.link": 1, recipes: 1 })
+		.then(ingredients => {
+			if (!ingredients) {
+				return res.status(404).json({
+					error: "There are no ingredients",
+					success: false
+				});
+			}
+			res.json({ ingredients, success: true });
+		})
+		.catch(err =>
+			res.status(400).json({
+				error: "Unexpected error while get meal",
+				success: false
+			})
+		);
+});
+
+// @route 	POST api/ingredients/:id
+// @desc  	Update Ingredient
 // @access	Admin
 router.post(
 	"/:id",
@@ -90,101 +98,106 @@ router.post(
 	(req, res) => {
 		if (!req.user.admin) {
 			return res.status(423).json({
-				accessError: "Access denied. Required admin account"
+				error: "Access denied. Required admin account",
+				success: false
 			});
 		}
 
-		const { errors, isValid } = validateMealUpdateInput(req.body, req.file);
+		const { errors, isValid } = validateIngredientUpdateInput(
+			req.body,
+			req.file
+		);
 		if (!isValid) {
-			return res.status(400).json(errors);
+			return res.status(400).json({ errors, success: false });
 		}
 
-		Meal.findById(req.params.id)
-			.then(meal => {
-				if (!meal) {
-					return res.json({ mealUploadError: "Meal not found" });
+		Ingredient.findById(req.params.id)
+			.then(ingredient => {
+				if (!ingredient) {
+					return res.json({
+						error: "Ingredient not found",
+						success: false
+					});
 				}
 
-				const updateMeal = {};
-				if (!isEmpty(req.body.name) && meal.name !== req.body.name) {
-					updateMeal.name = req.body.name;
+				const updateIngedient = {};
+				if (
+					!isEmpty(req.body.name) &&
+					ingredient.name !== req.body.name
+				) {
+					updateIngedient.name = req.body.name;
 				}
 
 				if (req.file) {
 					return (
-						deleteImage(meal.image.deletehash)
+						deleteImage(ingredient.image.deletehash)
 							.then(data => uploadImage(req.file))
 							.catch(errors =>
-								res.status(400).json({
-									imageDeleteError:
-										"Unable to delete old image",
-									errors
-								})
+								console.log(
+									"Unexpected error when delete old image"
+								)
 							)
 							// Upload new image finish
 							.then(newImage => {
 								const { deletehash, link } = newImage.data.data;
-								updateMeal.image = {
+								updateIngedient.image = {
 									link,
 									deletehash
 								};
 
-								return Meal.findByIdAndUpdate(
+								return Ingredient.findByIdAndUpdate(
 									req.params.id,
-									{ $set: updateMeal },
+									{ $set: updateIngedient },
 									{ new: true, useFindAndModify: false }
 								);
 							})
 							.catch(errors =>
-								res.status(400).json({
-									imageUploadError:
-										"Unexpected error while upload new image",
-									errors
-								})
+								console.log(
+									"Unexpected error when upload new image"
+								)
 							)
 							// Find and update meal finish
-							.then(updatedMeal =>
-								res.json({ updatedMeal, succes: true })
+							.then(updatedIngedient =>
+								res.json({ updatedIngedient, succes: true })
 							)
-							.catch(errors =>
+							.catch(err =>
 								res.status(404).json({
-									mealUpdateError:
-										"Unexpected error while update meal",
-									errors
+									error:
+										"Unexpected error while update ingredient",
+									success: false
 								})
 							)
 					);
-				} else if (!isEmpty(updateMeal)) {
-					return Meal.findByIdAndUpdate(
+				} else if (!isEmpty(updateIngedient)) {
+					return Ingredient.findByIdAndUpdate(
 						req.params.id,
-						{ $set: updateMeal },
+						{ $set: updateIngedient },
 						{ new: true, useFindAndModify: false }
 					)
-						.then(updatedMeal =>
-							res.json({ updatedMeal, succes: true })
+						.then(updatedIngedient =>
+							res.json({ updatedIngedient, succes: true })
 						)
-						.catch(errors =>
+						.catch(err =>
 							res.status(404).json({
-								mealUpdateError:
-									"Unexpected error while update meal",
-								errors
+								error:
+									"Unexpected error while update ingredient",
+								success: false
 							})
 						);
 				}
-				return res.json({ meal, succes: true });
+				return res.json({ ingredient, succes: true });
 			})
-			.catch(errors =>
+			.catch(err =>
 				res.status(404).json({
-					mealUpdateError:
-						"Unexpected error while searching for meal",
-					errors
+					error: "Unexpected error while searching for ingredient",
+					status: false
 				})
 			);
 	}
 );
 
-// @route 	POST api/meals
-// @desc  	Add New Meal
+// @route 	POST api/ingredients
+// @desc  	Add New Ingredient
 // @access	Admin
 router.post(
 	"/",
@@ -193,28 +206,32 @@ router.post(
 	(req, res) => {
 		if (!req.user.admin) {
 			return res.status(423).json({
-				accessError: "Access denied. Required admin account"
+				error: "Access denied. Required admin account",
+				success: false
 			});
 		}
 
-		const { errors, isValid } = validateAddMealInput(req.body, req.file);
+		const { errors, isValid } = validateAddIngredientInput(
+			req.body,
+			req.file
+		);
 		if (!isValid) {
 			return res.status(400).json(errors);
 		}
 
 		const { name } = req.body;
 
-		Meal.findOne({ name })
-			.then(meal => {
-				if (meal) {
-					errors.meal = "Meal name already exist";
-					return res.status(400).json(errors);
+		Ingredient.findOne({ name })
+			.then(ingredient => {
+				if (ingredient) {
+					errors.ingredient = "Meal name already exist";
+					return res.status(400).json({ errors, success: false });
 				}
 
 				uploadImage(req.file)
 					.then(data => {
 						const { deletehash, link } = data.data.data;
-						const newMeal = new Meal({
+						const newIngredient = new Ingredient({
 							name,
 							image: {
 								link,
@@ -222,40 +239,33 @@ router.post(
 							}
 						});
 
-						return newMeal.save();
+						return newIngredient.save();
 					})
-					.catch(errors =>
-						res.status(400).json({
-							imageUploadError:
-								"Unexpected error while upload image",
-							errors
-						})
+					.catch(err =>
+						console.log("Unexpected error while upload image")
 					)
-					// Meal saved
-					.then(meal => res.json({ meal, success: true }))
-					.catch(errors =>
+					// Ingredient saved
+					.then(savedIngredient =>
+						res.json({ savedIngredient, success: true })
+					)
+					.catch(err =>
 						res.status(400).json({
-							mealUploadError: "Unexpected error while save meal",
-							errors
+							error: "Unexpected error while save meal",
+							success: false
 						})
 					);
 			})
-			.catch(errors =>
+			.catch(err =>
 				res.json({
-					mealUploadError: "Unexpected error while validate meal",
-					errors
+					error: "Unexpected error while validate meal",
+					success: false
 				})
 			);
 	}
 );
 
-// @route 	GET api/meals/test
-// @desc  	Tests users route
-// @access	Public
-router.get("/test", (req, res) => res.json({ msg: "meals works" }));
-
-// @route 	DELETE api/meals/:id
-// @desc  	Delete Meal
+// @route 	DELETE api/ingredients/:id
+// @desc  	Delete Ingredient
 // @access	Admin
 router.delete(
 	"/:id",
@@ -263,49 +273,44 @@ router.delete(
 	(req, res) => {
 		if (!req.user.admin) {
 			return res.status(423).json({
-				accessError: "Access denied. Required admin account"
+				error: "Access denied. Required admin account",
+				success: false
 			});
 		}
 
-		Meal.findById(req.params.id)
-			.then(meal => {
-				if (!meal) {
+		Ingredient.findById(req.params.id)
+			.then(ingredient => {
+				if (!ingredient) {
 					return res
 						.status(404)
-						.json({ getMealError: "Meal not found" });
+						.json({ error: "Meal not found", success: false });
 				}
 
-				deleteImage(meal.image.deletehash)
+				deleteImage(ingredient.image.deletehash)
 					.then(data =>
-						Meal.findByIdAndRemove(req.params.id, {
+						Ingredient.findByIdAndRemove(req.params.id, {
 							useFindAndModify: false
 						})
 					)
-					.catch(errors =>
-						res.status(400).json({
-							imageDeleteError: "Unable to delete old image",
-							errors
-						})
-					)
+					.catch(errors => console.log("Unable to delete old image"))
 					// Find and delete meal finish
 					.then(deletedMeal =>
 						res.json({ deletedMeal, succes: true })
 					)
-					.catch(errors =>
+					.catch(err =>
 						res.status(404).json({
-							mealDeleteError:
-								"Unexpected error while delete meal",
-							errors
+							error: "Unexpected error while delete meal",
+							success: false
 						})
 					);
 			})
-			.catch(errors =>
+			.catch(err =>
 				res.status(404).json({
-					mealDeleteError:
-						"Unexpected error while searching for meal",
-					errors
+					error: "Unexpected error while searching for meal",
+					success: false
 				})
 			);
 	}
 );
+
 module.exports = router;

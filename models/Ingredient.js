@@ -12,7 +12,7 @@ const IngredientSchema = new Schema({
 			type: Schema.Types.String,
 			required: true
 		},
-		deleteHash: {
+		deletehash: {
 			type: Schema.Types.String,
 			required: true
 		}
