@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 // Create schema
-const MealSchema = new Schema({
+const CourseSchema = new Schema({
 	name: {
 		type: Schema.Types.String,
 		required: true
@@ -16,13 +16,7 @@ const MealSchema = new Schema({
 			type: Schema.Types.String,
 			required: true
 		}
-	},
-	recipes: [
-		{
-			type: Schema.Types.ObjectId,
-			ref: "recipes"
-		}
-	]
+	}
 });
 
-module.exports = meal = mongoose.model("meals", MealSchema);
+module.exports = course = mongoose.model("courses", CourseSchema);

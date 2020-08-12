@@ -7,9 +7,14 @@ const RecipeSchema = new Schema({
 		type: Schema.Types.String,
 		required: true
 	},
-	meal: {
+	user: {
 		type: Schema.Types.ObjectId,
-		ref: "meals",
+		ref: "users",
+		required: true
+	},
+	course: {
+		type: Schema.Types.ObjectId,
+		ref: "courses",
 		required: true
 	},
 	ingredients: [
@@ -19,7 +24,7 @@ const RecipeSchema = new Schema({
 				ref: "ingredients"
 			},
 			quantity: {
-				type: Schema.Types.Number,
+				type: Schema.Types.String,
 				required: true
 			}
 		}
@@ -29,7 +34,7 @@ const RecipeSchema = new Schema({
 			type: Schema.Types.String,
 			required: true
 		},
-		deleteHash: {
+		deletehash: {
 			type: Schema.Types.String,
 			required: true
 		}
@@ -54,7 +59,7 @@ const RecipeSchema = new Schema({
 					type: Schema.Types.String,
 					required: true
 				},
-				deleteHash: {
+				deletehash: {
 					type: Schema.Types.String,
 					required: true
 				}

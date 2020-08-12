@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const jwt = require("jsonwebtoken");
 const passport = require("passport");
-const keys = require("../../config/keys");
 
 // Import sevices
 const {
@@ -14,7 +12,7 @@ const {
 // Load validation
 const isEmpty = require("../../validations/is-empty");
 const validateAddIngredientInput = require("../../validations/ingredientAdd");
-const validateIngredientUpdateInput = require("../../validations/ingredientUpdate");
+const validateImage = require("../../validations/image");
 
 // Load models
 const Ingredient = require("../../models/Ingredient");
@@ -23,6 +21,28 @@ const Ingredient = require("../../models/Ingredient");
 // @desc  	Tests route
 // @access	Public
 router.get("/test", (req, res) => res.json({ msg: "ingredients works" }));
+
+// @route 	GET api/ingredients
+// @desc  	Get all available ingredients
+// @access	Public
+router.get("/", (req, res) => {
+	Ingredient.find({}, { name: 1, "image.link": 1 })
+		.then(ingredients => {
+			if (!ingredients) {
+				return res.status(404).json({
+					error: "There are no ingredients",
+					success: false
+				});
+			}
+			res.json({ ingredients, success: true });
+		})
+		.catch(err =>
+			res.status(400).json({
+				error: "Unexpected error while get meal",
+				success: false
+			})
+		);
+});
 
 // @route 	GET api/ingredients/ingredient?id=&name=
 // @desc  	Get ingredient by id or name
@@ -34,13 +54,12 @@ router.get("/ingredient", (req, res) => {
 	if (id) {
 		query = Ingredient.findById(id, {
 			name: 1,
-			"image.link": 1,
-			recipes: 1
+			"image.link": 1
 		});
 	} else if (name) {
 		query = Ingredient.findOne(
 			{ name: { $regex: name, $options: "i" } },
-			{ name: 1, "image.link": 1, recipes: 1 }
+			{ name: 1, "image.link": 1 }
 		);
 	} else {
 		return res.status(400).json({
@@ -66,32 +85,10 @@ router.get("/ingredient", (req, res) => {
 		);
 });
 
-// @route 	GET api/ingredients/all
-// @desc  	Get all available ingredients
-// @access	Public
-router.get("/all", (req, res) => {
-	Ingredient.find({}, { name: 1, "image.link": 1, recipes: 1 })
-		.then(ingredients => {
-			if (!ingredients) {
-				return res.status(404).json({
-					error: "There are no ingredients",
-					success: false
-				});
-			}
-			res.json({ ingredients, success: true });
-		})
-		.catch(err =>
-			res.status(400).json({
-				error: "Unexpected error while get meal",
-				success: false
-			})
-		);
-});
-
 // @route 	POST api/ingredients/:id
 // @desc  	Update Ingredient
 // @access	Admin
-router.post(
+router.put(
 	"/:id",
 	passport.authenticate("jwt", { session: false }),
 	upload,
@@ -103,10 +100,7 @@ router.post(
 			});
 		}
 
-		const { errors, isValid } = validateIngredientUpdateInput(
-			req.body,
-			req.file
-		);
+		const { errors, isValid } = validateImage(req.file);
 		if (!isValid) {
 			return res.status(400).json({ errors, success: false });
 		}

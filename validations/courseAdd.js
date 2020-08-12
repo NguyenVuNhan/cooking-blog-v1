@@ -1,7 +1,7 @@
 const validator = require("validator");
 const isEmpty = require("./is-empty");
 
-const validateAddMealInput = (data, file) => {
+const validateAddCourseInput = (data, file) => {
 	let errors = {};
 
 	data.name = !isEmpty(data.name) ? data.name : "";
@@ -12,7 +12,7 @@ const validateAddMealInput = (data, file) => {
 	}
 
 	if (validator.isEmpty(data.name)) {
-		errors.name = "Meal name is required";
+		errors.name = "Course name is required";
 	}
 
 	return {
@@ -21,4 +21,4 @@ const validateAddMealInput = (data, file) => {
 	};
 };
 
-module.exports = validateAddMealInput;
+module.exports = validateAddCourseInput;

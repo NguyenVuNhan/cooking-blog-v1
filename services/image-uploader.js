@@ -4,9 +4,14 @@ const key = require("../config/keys");
 
 // Multer config
 const storage = multer.memoryStorage();
+// Singe image upload
 const upload = multer({
 	storage
 }).single("image");
+// Multiple image upload
+const multipleUpload = multer({
+	storage
+}).array("images");
 
 // Axios instace config
 const axios_imgur = axios.create({
@@ -32,4 +37,4 @@ const deleteImage = imageId => {
 	return axios_imgur.delete(`/3/image/${imageId}`);
 };
 
-module.exports = { uploadImage, deleteImage, upload };
+module.exports = { uploadImage, deleteImage, upload, multipleUpload };

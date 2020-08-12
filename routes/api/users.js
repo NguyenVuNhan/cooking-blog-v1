@@ -15,6 +15,33 @@ const validateEmailChangeInput = require("../../validations/userEmailChange");
 // Load models
 const User = require("../../models/User");
 
+// @route 	GET api/users/test
+// @desc  	Tests users route
+// @access	Public
+router.get("/test", (req, res) => res.json({ msg: "users works" }));
+
+// @route 	GET api/users
+// @desc  	Get all users
+// @access	Public
+router.get("/", (req, res) => {
+	User.find()
+		.then(users => {
+			if (!users) {
+				return res.status(404).json({
+					error: "No User Found",
+					success: false
+				});
+			}
+			res.json({ users, success: true });
+		})
+		.catch(err =>
+			res.status(404).json({
+				error: "Unexpected error when find user",
+				success: false
+			})
+		);
+});
+
 // @route 	GET api/users/recipes?id=&name=&page=&limit=
 // @desc  	Get current user recipes by id or name
 // @access	Public
@@ -54,7 +81,7 @@ router.get("/recipes", (req, res) => {
 // @route 	POST api/users/email
 // @desc  	Change email of current user
 // @access	Private
-router.post(
+router.put(
 	"/email",
 	passport.authenticate("jwt", { session: false }),
 	(req, res) => {
@@ -85,7 +112,7 @@ router.post(
 // @route 	POST api/users/password
 // @desc  	Change password of current user
 // @access	Private
-router.post(
+router.put(
 	"/password",
 	passport.authenticate("jwt", { session: false }),
 	(req, res) => {
@@ -245,7 +272,7 @@ router.post("/register", (req, res) => {
 					newUser.password = hash;
 					newUser
 						.save()
-						.then(updatedUSer =>
+						.then(updatedUser =>
 							res.json({ updatedUser, success: true })
 						)
 						.catch(err =>
@@ -259,10 +286,5 @@ router.post("/register", (req, res) => {
 		}
 	});
 });
-
-// @route 	GET api/users/test
-// @desc  	Tests users route
-// @access	Public
-router.get("/test", (req, res) => res.json({ msg: "users works" }));
 
 module.exports = router;

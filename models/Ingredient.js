@@ -16,13 +16,7 @@ const IngredientSchema = new Schema({
 			type: Schema.Types.String,
 			required: true
 		}
-	},
-	recipes: [
-		{
-			type: Schema.Types.ObjectId,
-			ref: "recipes"
-		}
-	]
+	}
 });
 
 module.exports = ingredient = mongoose.model("ingredients", IngredientSchema);

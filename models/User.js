@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const mongoosePaginate = require("mongoose-paginate");
 const Schema = mongoose.Schema;
 
 // Create schema
@@ -19,10 +18,6 @@ const UserSchema = new Schema({
 	avatar: {
 		type: Schema.Types.String
 	},
-	recipes: {
-		type: [Schema.Types.ObjectId],
-		ref: "recipes"
-	},
 	date: {
 		type: Schema.Types.String,
 		default: Date.now
@@ -33,5 +28,4 @@ const UserSchema = new Schema({
 	}
 });
 
-UserSchema.plugin(mongoosePaginate);
 module.exports = user = mongoose.model("users", UserSchema);

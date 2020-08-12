@@ -2,9 +2,10 @@ const express = require("express");
 
 // import routes
 const users = require("./api/users");
-const meals = require("./api/meals");
+const courses = require("./api/courses");
 const ingredients = require("./api/ingredients");
 const recipes = require("./api/recipes");
+const images = require("./api/images");
 
 module.exports = function(app) {
 	// Test api
@@ -14,7 +15,8 @@ module.exports = function(app) {
 
 	// Routes
 	app.use("/api/users", users);
-	app.use("/api/meals", meals);
+	app.use("/api/courses", courses);
 	app.use("/api/ingredients", ingredients);
 	app.use("/api/recipes", recipes);
+	app.use("/api/images", images);
 };

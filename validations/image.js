@@ -1,7 +1,7 @@
 const validator = require("validator");
 const isEmpty = require("./is-empty");
 
-const validateMealUpdateInput = (data, file) => {
+const validateImage = file => {
 	let errors = {};
 
 	if (!isEmpty(file) && !validator.contains(file.mimetype, "image")) {
@@ -15,4 +15,4 @@ const validateMealUpdateInput = (data, file) => {
 	};
 };
 
-module.exports = validateMealUpdateInput;
+module.exports = validateImage;
