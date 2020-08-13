@@ -37,10 +37,20 @@ Next, you will need to create `key.dev.js` file in `config` folder to be able to
 
 ```
 module.exports = {
-	mongoUrl: "Mongodb connection url"
-	secretOrKey: "SECRET KEY FOR JWT"
+	mongoUrl: { MONGO_URI },
+	secretOrKey: { SECRET_OR_KEY },
+	imgur: {
+		clientID: { IMGUR_CLIENT_ID },
+		clientSecret: { IMGUR_CLIENT_SECRET },
+		album: {
+			id: { IMGUR_ALBUM_ID },
+			deletehash: { IMGUR_ALBUM_DELETE_HASH }
+		}
+	}
 };
 ```
+
+I used imgur as the online storage for image since it FREE and well documented
 
 When everything is done, you should be able to run the following command:
 
