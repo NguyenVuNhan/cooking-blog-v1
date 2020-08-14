@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -15,11 +15,13 @@ import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MoreIcon from "@material-ui/icons/MoreVert";
 
+import { logoutRequest } from "../../../actions/authActions";
 import useStyles from "./styles";
 
 const Navbar = () => {
 	const classes = useStyles();
 	const history = useHistory();
+	const dispatch = useDispatch();
 	const auth = useSelector(state => state.auth);
 	const { isAuthenticated, user } = auth;
 
@@ -31,6 +33,11 @@ const Navbar = () => {
 
 	const toLanding = () => {
 		history.push("/");
+	};
+
+	const logout = e => {
+		dispatch(logoutRequest(history));
+		handleMenuClose();
 	};
 
 	const handleProfileMenuOpen = event => {
@@ -64,7 +71,7 @@ const Navbar = () => {
 			onClose={handleMenuClose}
 		>
 			<MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-			<MenuItem onClick={handleMenuClose}>My account</MenuItem>
+			<MenuItem onClick={logout}>Logout</MenuItem>
 		</Menu>
 	);
 

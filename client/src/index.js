@@ -10,7 +10,7 @@ import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 import rootReducer from "./reducers";
 import rootSaga from "./sagas";
-import { setCurrentUser } from "./actions/authActions";
+import { setCurrentUser, logoutRequest } from "./actions/authActions";
 import setAuthToken from "./utils/setAuthToken";
 
 const initialState = {};
@@ -34,12 +34,11 @@ if (localStorage.jwtToken) {
 	store.dispatch(setCurrentUser(decoded));
 
 	const currentTime = Date.now() / 1000;
-	// if (currentTime > decoded.exp) {
-	// store.dispatch(logoutUser());
-	// store.dispatch(clearCurrentProfile());
+	if (currentTime > decoded.exp) {
+		store.dispatch(logoutRequest());
 
-	// window.location.href = "/login";
-	// }
+		window.location.href = "/login";
+	}
 }
 
 ReactDOM.render(

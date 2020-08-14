@@ -1,4 +1,5 @@
 import { SET_CURRENT_USER, LOGIN_REQUEST } from "../actions/types";
+import isEmpty from "../utils/isEmpty";
 
 const initialState = {
 	user: {},
@@ -15,7 +16,7 @@ export default (state = initialState, action) => {
 				...state,
 				user: action.payload,
 				loading: false,
-				isAuthenticated: true
+				isAuthenticated: !isEmpty(action.payload)
 			};
 		default:
 			return state;

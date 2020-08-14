@@ -1,7 +1,7 @@
 import jwt_decode from "jwt-decode";
 import { take, call, put } from "redux-saga/effects";
 
-import { LOGIN_REQUEST } from "../actions/types";
+import { LOGIN_REQUEST, LOGOUT_REQUEST } from "../actions/types";
 import setAuthToken from "../utils/setAuthToken";
 import { loginUser, setCurrentUser } from "../actions/authActions";
 import { setErrors } from "../actions/errorActions";
@@ -22,5 +22,16 @@ export function* loginFlow() {
 		} catch (err) {
 			yield put(setErrors(err.response.data));
 		}
+	}
+}
+
+export function* logoutFlow() {
+	while (true) {
+		const { history } = yield take(LOGOUT_REQUEST);
+		localStorage.removeItem("jwtToken");
+		setAuthToken(false);
+		yield put(setCurrentUser({}));
+
+		yield history.push("/");
 	}
 }
