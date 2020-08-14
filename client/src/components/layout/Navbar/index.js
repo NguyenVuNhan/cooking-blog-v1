@@ -1,29 +1,37 @@
 import React from "react";
+import { Link, useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
+import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import InputBase from "@material-ui/core/InputBase";
-import Badge from "@material-ui/core/Badge";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
+import Avatar from "@material-ui/core/Avatar";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import MailIcon from "@material-ui/icons/Mail";
-import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 
 import useStyles from "./styles";
 
 const Navbar = () => {
 	const classes = useStyles();
+	const history = useHistory();
+	const auth = useSelector(state => state.auth);
+	const { isAuthenticated, user } = auth;
 
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
 	const isMenuOpen = Boolean(anchorEl);
 	const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+	const toLanding = () => {
+		history.push("/");
+	};
 
 	const handleProfileMenuOpen = event => {
 		setAnchorEl(event.currentTarget);
@@ -43,6 +51,8 @@ const Navbar = () => {
 	};
 
 	const menuId = "primary-search-account-menu";
+	const mobileMenuId = "primary-search-account-menu-mobile";
+
 	const renderMenu = (
 		<Menu
 			anchorEl={anchorEl}
@@ -58,7 +68,6 @@ const Navbar = () => {
 		</Menu>
 	);
 
-	const mobileMenuId = "primary-search-account-menu-mobile";
 	const renderMobileMenu = (
 		<Menu
 			anchorEl={mobileMoreAnchorEl}
@@ -69,33 +78,14 @@ const Navbar = () => {
 			open={isMobileMenuOpen}
 			onClose={handleMobileMenuClose}
 		>
-			<MenuItem>
-				<IconButton aria-label="show 4 new mails" color="inherit">
-					<Badge badgeContent={4} color="secondary">
-						<MailIcon />
-					</Badge>
-				</IconButton>
-				<p>Messages</p>
-			</MenuItem>
-			<MenuItem>
-				<IconButton
-					aria-label="show 11 new notifications"
-					color="inherit"
-				>
-					<Badge badgeContent={11} color="secondary">
-						<NotificationsIcon />
-					</Badge>
-				</IconButton>
-				<p>Notifications</p>
-			</MenuItem>
 			<MenuItem onClick={handleProfileMenuOpen}>
 				<IconButton
 					aria-label="account of current user"
-					aria-controls="primary-search-account-menu"
+					aria-controls={menuId}
 					aria-haspopup="true"
 					color="inherit"
 				>
-					<AccountCircle />
+					<Avatar alt={user.name} src={user.avatar} />
 				</IconButton>
 				<p>Profile</p>
 			</MenuItem>
@@ -114,7 +104,12 @@ const Navbar = () => {
 					>
 						<MenuIcon />
 					</IconButton>
-					<Typography className={classes.title} variant="h6" noWrap>
+					<Typography
+						className={classes.title}
+						variant="h6"
+						noWrap
+						onClick={toLanding}
+					>
 						Cooking blog
 					</Typography>
 					<div className={classes.search}>
@@ -131,45 +126,43 @@ const Navbar = () => {
 						/>
 					</div>
 					<div className={classes.grow} />
-					<div className={classes.sectionDesktop}>
-						<IconButton
-							aria-label="show 4 new mails"
-							color="inherit"
+					{isAuthenticated ? (
+						<React.Fragment>
+							<div className={classes.sectionDesktop}>
+								<IconButton
+									edge="end"
+									aria-label="account of current user"
+									aria-controls={menuId}
+									aria-haspopup="true"
+									onClick={handleProfileMenuOpen}
+									color="inherit"
+								>
+									<Avatar alt={user.name} src={user.avatar} />
+								</IconButton>
+							</div>
+							<div className={classes.sectionMobile}>
+								<IconButton
+									aria-label="show more"
+									aria-controls={mobileMenuId}
+									aria-haspopup="true"
+									onClick={handleMobileMenuOpen}
+									color="inherit"
+								>
+									<MoreIcon />
+								</IconButton>
+							</div>
+						</React.Fragment>
+					) : (
+						<Button
+							variant="outlined"
+							style={{ color: "white" }}
+							startIcon={<AccountCircle />}
+							component={Link}
+							to={"/login"}
 						>
-							<Badge badgeContent={0} color="secondary">
-								<MailIcon />
-							</Badge>
-						</IconButton>
-						<IconButton
-							aria-label="show 17 new notifications"
-							color="inherit"
-						>
-							<Badge badgeContent={17} color="secondary">
-								<NotificationsIcon />
-							</Badge>
-						</IconButton>
-						<IconButton
-							edge="end"
-							aria-label="account of current user"
-							aria-controls={menuId}
-							aria-haspopup="true"
-							onClick={handleProfileMenuOpen}
-							color="inherit"
-						>
-							<AccountCircle />
-						</IconButton>
-					</div>
-					<div className={classes.sectionMobile}>
-						<IconButton
-							aria-label="show more"
-							aria-controls={mobileMenuId}
-							aria-haspopup="true"
-							onClick={handleMobileMenuOpen}
-							color="inherit"
-						>
-							<MoreIcon />
-						</IconButton>
-					</div>
+							Login
+						</Button>
+					)}
 				</Toolbar>
 			</AppBar>
 			{renderMobileMenu}

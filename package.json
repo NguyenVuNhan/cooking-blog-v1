@@ -17,9 +17,7 @@
 		"type": "git",
 		"url": "git+https://github.com/NguyenVuNhan/cooking-blog.git"
 	},
-	"keywords": [
-		"cooking-blog"
-	],
+	"keywords": ["cooking-blog"],
 	"author": "Nhan Nguyen",
 	"license": "MIT",
 	"bugs": {
@@ -42,5 +40,8 @@
 		"passport": "^0.4.1",
 		"passport-jwt": "^4.0.0",
 		"validator": "^13.1.1"
+	},
+	"nodemonConfig": {
+		"ignore": ["client/*", "client-native/*"]
 	}
 }

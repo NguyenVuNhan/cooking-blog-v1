@@ -1,4 +1,4 @@
-import { fade, makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import background from "../../../image/landing.jpg";
 
 const useStyles = makeStyles(theme => ({
@@ -33,7 +33,6 @@ const useStyles = makeStyles(theme => ({
 		marginBottom: theme.spacing(2),
 		marginLeft: 0,
 		marginRight: 0,
-		marginLeft: 0,
 		width: "100%"
 	},
 	searchIcon: {
