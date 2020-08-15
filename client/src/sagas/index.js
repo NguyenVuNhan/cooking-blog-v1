@@ -1,6 +1,6 @@
 import { all } from "redux-saga/effects";
-import { loginFlow, logoutFlow } from "./authSaga";
+import { loginFlow, registerFlow, logoutFlow } from "./authSaga";
 
 export default function* rootSaga() {
-	yield all([loginFlow(), logoutFlow()]);
+	yield all([loginFlow(), registerFlow(), logoutFlow()]);
 }

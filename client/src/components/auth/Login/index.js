@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
@@ -12,10 +12,11 @@ import isEmpty from "../../../utils/isEmpty";
 import { loginRequest } from "../../../actions/authActions";
 
 const Login = () => {
+	const dispatch = useDispatch();
+	const history = useHistory();
 	const { handleSubmit, register } = useForm();
 	const errors = useSelector(state => state.errors);
 	const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
-	const dispatch = useDispatch();
 
 	if (isAuthenticated) {
 		return <Redirect to="/" />;
@@ -27,7 +28,7 @@ const Login = () => {
 
 	return (
 		<form noValidate onSubmit={handleSubmit(onSubmit)}>
-			<Paper style={{ padding: 16, marginTop: 20 }}>
+			<Paper elevation={24} style={{ padding: 16, marginTop: 80 }}>
 				<Grid container alignItems="flex-start" spacing={2}>
 					<Grid item xs={12}>
 						<Typography variant="h2" align="center" noWrap>
@@ -65,7 +66,19 @@ const Login = () => {
 							}
 						/>
 					</Grid>
-					<Grid item style={{ marginTop: 16 }}>
+					<Grid
+						container
+						direction="row"
+						justify="space-between"
+						alignItems="center"
+						style={{ padding: 20 }}
+					>
+						<Button
+							color="primary"
+							onClick={() => history.push("/register")}
+						>
+							Create Account
+						</Button>
 						<Button
 							variant="contained"
 							color="primary"

@@ -8,6 +8,8 @@ import Container from "@material-ui/core/Container";
 import Navbar from "./components/layout/Navbar";
 import Landing from "./components/layout/Landing";
 import Login from "./components/auth/Login";
+import Register from "./components/auth/Register";
+
 function App() {
 	return (
 		<Router>
@@ -16,7 +18,8 @@ function App() {
 				<Route exact path="/" component={Landing} />
 				<Container maxWidth="sm">
 					<Route exact path="/login" component={Login} />
-				</Container>{" "}
+					<Route exact path="/register" component={Register} />
+				</Container>
 			</ThemeProvider>
 		</Router>
 	);

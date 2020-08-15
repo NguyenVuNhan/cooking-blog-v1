@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Redirect, useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { Redirect } from "react-router-dom";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
@@ -9,20 +9,21 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 
 import isEmpty from "../../../utils/isEmpty";
-import { loginRequest } from "../../../actions/authActions";
+import { registerRequest } from "../../../actions/authActions";
 
 const Login = () => {
+	const history = useHistory();
+	const dispatch = useDispatch();
 	const { handleSubmit, register } = useForm();
 	const errors = useSelector(state => state.errors);
 	const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
-	const dispatch = useDispatch();
 
 	if (isAuthenticated) {
 		return <Redirect to="/" />;
 	}
 
 	const onSubmit = data => {
-		dispatch(loginRequest(data));
+		dispatch(registerRequest(data, history));
 	};
 
 	return (
@@ -41,8 +42,21 @@ const Login = () => {
 						<TextField
 							fullWidth
 							inputRef={register}
+							name="name"
+							label="User Name"
+							variant="outlined"
+							error={!isEmpty(errors.name)}
+							helperText={
+								!isEmpty(errors.name) ? errors.name : ""
+							}
+						/>
+					</Grid>
+					<Grid item xs={12}>
+						<TextField
+							fullWidth
+							inputRef={register}
 							name="email"
-							placeholder="Email Address"
+							label="Email Address"
 							type="email"
 							variant="outlined"
 							error={!isEmpty(errors.email)}
@@ -56,7 +70,7 @@ const Login = () => {
 							fullWidth
 							inputRef={register}
 							name="password"
-							placeholder="Password"
+							label="Password"
 							variant="outlined"
 							error={!isEmpty(errors.password)}
 							type="password"
@@ -65,7 +79,29 @@ const Login = () => {
 							}
 						/>
 					</Grid>
-					<Grid item style={{ marginTop: 16 }}>
+					<Grid item xs={12}>
+						<TextField
+							fullWidth
+							inputRef={register}
+							name="password2"
+							label="Confirm Password"
+							variant="outlined"
+							error={!isEmpty(errors.password2)}
+							type="password"
+							helperText={
+								!isEmpty(errors.password2)
+									? errors.password2
+									: ""
+							}
+						/>
+					</Grid>
+					<Grid
+						container
+						direction="row"
+						justify="flex-end"
+						alignItems="center"
+						style={{ padding: 20 }}
+					>
 						<Button
 							variant="contained"
 							color="primary"

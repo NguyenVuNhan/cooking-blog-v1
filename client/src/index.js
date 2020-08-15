@@ -12,6 +12,7 @@ import rootReducer from "./reducers";
 import rootSaga from "./sagas";
 import { setCurrentUser, logoutRequest } from "./actions/authActions";
 import setAuthToken from "./utils/setAuthToken";
+import clearAuthToken from "./utils/clearAuthToken";
 
 const initialState = {};
 const sagaMiddleware = createSagaMiddleware();
@@ -35,9 +36,7 @@ if (localStorage.jwtToken) {
 
 	const currentTime = Date.now() / 1000;
 	if (currentTime > decoded.exp) {
-		store.dispatch(logoutRequest());
-
-		window.location.href = "/login";
+		clearAuthToken();
 	}
 }
 

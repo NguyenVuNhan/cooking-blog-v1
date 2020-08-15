@@ -115,7 +115,7 @@ const Navbar = () => {
 						className={classes.title}
 						variant="h6"
 						noWrap
-						onClick={toLanding}
+						onClick={() => history.push("/")}
 					>
 						Cooking blog
 					</Typography>
