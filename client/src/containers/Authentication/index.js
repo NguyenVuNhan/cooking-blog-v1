@@ -12,6 +12,4 @@ const Authentication = () => {
 	);
 };
 
-Authentication.defaultProps = {};
-
 export default Authentication;

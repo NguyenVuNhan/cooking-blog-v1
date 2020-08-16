@@ -60,6 +60,10 @@ const useStyles = makeStyles(theme => ({
 		[theme.breakpoints.up("md")]: {
 			display: "none"
 		}
+	},
+	small: {
+		width: theme.spacing(3),
+		height: theme.spacing(3)
 	}
 }));
 

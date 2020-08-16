@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -8,43 +8,25 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import InputBase from "@material-ui/core/InputBase";
 import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
 import Avatar from "@material-ui/core/Avatar";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MoreIcon from "@material-ui/icons/MoreVert";
 
-import { logoutRequest } from "reducers/auth/actions";
+import ProfileMenu from "./ProfileMenu";
+import MobileMenu from "./MobileMenu";
 import useStyles from "./styles";
 
 const Navbar = () => {
 	const classes = useStyles();
 	const history = useHistory();
-	const dispatch = useDispatch();
+	const [anchorEl, setAnchorEl] = useState(null);
+	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
 	const auth = useSelector(state => state.auth);
 	const { isAuthenticated, user } = auth;
-
-	const [anchorEl, setAnchorEl] = React.useState(null);
-	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
-	const isMenuOpen = Boolean(anchorEl);
-	const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-	const logout = e => {
-		dispatch(logoutRequest(history));
-		handleMenuClose();
-	};
-
-	const toIngredientEdit = e => {
-		history.push("/admin/ingredient");
-		handleMenuClose();
-	};
-
-	const toProfile = e => {
-		history.push("/profile");
-		handleMenuClose();
-	};
+	const menuId = "primary-search-account-menu";
+	const mobileMenuId = "primary-search-account-menu-mobile";
 
 	const handleProfileMenuOpen = event => {
 		setAnchorEl(event.currentTarget);
@@ -62,51 +44,6 @@ const Navbar = () => {
 	const handleMobileMenuOpen = event => {
 		setMobileMoreAnchorEl(event.currentTarget);
 	};
-
-	const menuId = "primary-search-account-menu";
-	const mobileMenuId = "primary-search-account-menu-mobile";
-
-	const renderMenu = (
-		<Menu
-			anchorEl={anchorEl}
-			anchorOrigin={{ vertical: "top", horizontal: "right" }}
-			id={menuId}
-			keepMounted
-			transformOrigin={{ vertical: "top", horizontal: "right" }}
-			open={isMenuOpen}
-			onClose={handleMenuClose}
-		>
-			<MenuItem onClick={toProfile}>Profile</MenuItem>
-			{user.admin && (
-				<MenuItem onClick={toIngredientEdit}>Add Ingredient</MenuItem>
-			)}
-			<MenuItem onClick={logout}>Logout</MenuItem>
-		</Menu>
-	);
-
-	const renderMobileMenu = (
-		<Menu
-			anchorEl={mobileMoreAnchorEl}
-			anchorOrigin={{ vertical: "top", horizontal: "right" }}
-			id={mobileMenuId}
-			keepMounted
-			transformOrigin={{ vertical: "top", horizontal: "right" }}
-			open={isMobileMenuOpen}
-			onClose={handleMobileMenuClose}
-		>
-			<MenuItem onClick={handleProfileMenuOpen}>
-				<IconButton
-					aria-label="account of current user"
-					aria-controls={menuId}
-					aria-haspopup="true"
-					color="inherit"
-				>
-					<Avatar alt={user.name} src={user.avatar} />
-				</IconButton>
-				<p>Profile</p>
-			</MenuItem>
-		</Menu>
-	);
 
 	return (
 		<div className={classes.grow}>
@@ -181,8 +118,34 @@ const Navbar = () => {
 					)}
 				</Toolbar>
 			</AppBar>
-			{renderMobileMenu}
-			{renderMenu}
+			<MobileMenu
+				anchorEl={mobileMoreAnchorEl}
+				id={mobileMenuId}
+				onClose={handleMobileMenuClose}
+			>
+				<MenuItem onClick={handleProfileMenuOpen}>
+					<IconButton
+						aria-label="account of current user"
+						aria-controls={menuId}
+						aria-haspopup="true"
+						color="inherit"
+					>
+						<Avatar
+							alt={user.name}
+							src={user.avatar}
+							className={classes.small}
+						/>
+					</IconButton>
+					<p>Profile</p>
+				</MenuItem>
+			</MobileMenu>
+
+			<ProfileMenu
+				id={menuId}
+				admin={user.admin}
+				anchorEl={anchorEl}
+				onClose={handleMenuClose}
+			/>
 		</div>
 	);
 };
