@@ -8,8 +8,8 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 
-import isEmpty from "../../../utils/isEmpty";
-import { registerRequest } from "../../../actions/authActions";
+import { isEmpty } from "utils";
+import { actions as authActions } from "reducers/auth";
 
 const Login = () => {
 	const history = useHistory();
@@ -23,7 +23,7 @@ const Login = () => {
 	}
 
 	const onSubmit = data => {
-		dispatch(registerRequest(data, history));
+		dispatch(authActions.registerRequest(data, history));
 	};
 
 	return (

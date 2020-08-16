@@ -1,4 +1,3 @@
-import axios from "axios";
 import setAuthToken from "./setAuthToken";
 
 const clearAuthToken = token => {

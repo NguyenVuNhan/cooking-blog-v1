@@ -5,14 +5,13 @@ import { createStore, applyMiddleware, compose } from "redux";
 import createSagaMiddleware from "redux-saga";
 import jwt_decode from "jwt-decode";
 
-import App from "./App";
+import { actions as authActions } from "reducers/auth";
+import { setAuthToken, clearAuthToken } from "utils";
+import rootReducer from "reducers";
+import rootSaga from "sagas";
+import App from "./containers/App";
 import "./index.css";
 import * as serviceWorker from "./serviceWorker";
-import rootReducer from "./reducers";
-import rootSaga from "./sagas";
-import { setCurrentUser, logoutRequest } from "./actions/authActions";
-import setAuthToken from "./utils/setAuthToken";
-import clearAuthToken from "./utils/clearAuthToken";
 
 const initialState = {};
 const sagaMiddleware = createSagaMiddleware();
@@ -32,7 +31,7 @@ const store = createStore(
 if (localStorage.jwtToken) {
 	setAuthToken(localStorage.jwtToken);
 	const decoded = jwt_decode(localStorage.jwtToken);
-	store.dispatch(setCurrentUser(decoded));
+	store.dispatch(authActions.setCurrentUser(decoded));
 
 	const currentTime = Date.now() / 1000;
 	if (currentTime > decoded.exp) {

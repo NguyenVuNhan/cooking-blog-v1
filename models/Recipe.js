@@ -23,6 +23,10 @@ const RecipeSchema = new Schema({
 				type: Schema.Types.ObjectId,
 				ref: "ingredients"
 			},
+			name: {
+				type: Schema.Types.String,
+				required: true
+			},
 			quantity: {
 				type: Schema.Types.String,
 				required: true

@@ -1,58 +1,48 @@
 import jwt_decode from "jwt-decode";
 import { take, call, put } from "redux-saga/effects";
 
-import {
-	LOGIN_REQUEST,
-	REGISTER_REQUEST,
-	LOGOUT_REQUEST
-} from "../actions/types";
-import setAuthToken from "../utils/setAuthToken";
-import clearAuthToken from "../utils/clearAuthToken";
-import { setErrors } from "../actions/errorActions";
-import {
-	loginUser,
-	registerUser,
-	setCurrentUser
-} from "../actions/authActions";
+import { types as authTypes, actions as authActions } from "reducers/auth";
+import { actions as errorActions } from "reducers/errors";
+import { setAuthToken, clearAuthToken } from "utils";
 
 export function* loginFlow() {
 	while (true) {
-		const { user } = yield take(LOGIN_REQUEST);
+		const { user } = yield take(authTypes.LOGIN_REQUEST);
 		try {
-			const res = yield call(loginUser, user);
+			const res = yield call(authActions.loginUser, user);
 			if (res.data) {
 				const { token } = res.data;
 				localStorage.setItem("jwtToken", token);
 				setAuthToken(token);
 				const decoded = jwt_decode(token);
 
-				yield put(setCurrentUser(decoded));
-				yield put(setErrors({}));
+				yield put(authActions.setCurrentUser(decoded));
+				yield put(errorActions.clearErrors());
 			}
 		} catch (err) {
-			yield put(setErrors(err.response.data));
+			yield put(errorActions.setErrors(err.response.data));
 		}
 	}
 }
 
 export function* registerFlow() {
 	while (true) {
-		const { user, history } = yield take(REGISTER_REQUEST);
+		const { user, history } = yield take(authTypes.REGISTER_REQUEST);
 		try {
-			yield call(registerUser, user);
+			yield call(authActions.registerUser, user);
 
 			yield history.push("/login");
-			yield put(setErrors({}));
+			yield put(errorActions.clearErrors());
 		} catch (err) {
-			yield put(setErrors(err.response.data));
+			yield put(errorActions.setErrors(err.response.data));
 		}
 	}
 }
 export function* logoutFlow() {
 	while (true) {
-		const { history } = yield take(LOGOUT_REQUEST);
+		const { history } = yield take(authTypes.LOGOUT_REQUEST);
 		clearAuthToken();
-		yield put(setCurrentUser({}));
+		yield put(authActions.setCurrentUser({}));
 
 		yield history.push("/");
 	}

@@ -15,7 +15,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MoreIcon from "@material-ui/icons/MoreVert";
 
-import { logoutRequest } from "../../../actions/authActions";
+import { logoutRequest } from "reducers/auth/actions";
 import useStyles from "./styles";
 
 const Navbar = () => {
@@ -31,12 +31,18 @@ const Navbar = () => {
 	const isMenuOpen = Boolean(anchorEl);
 	const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-	const toLanding = () => {
-		history.push("/");
-	};
-
 	const logout = e => {
 		dispatch(logoutRequest(history));
+		handleMenuClose();
+	};
+
+	const toIngredientEdit = e => {
+		history.push("/admin/ingredient");
+		handleMenuClose();
+	};
+
+	const toProfile = e => {
+		history.push("/profile");
 		handleMenuClose();
 	};
 
@@ -70,7 +76,10 @@ const Navbar = () => {
 			open={isMenuOpen}
 			onClose={handleMenuClose}
 		>
-			<MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+			<MenuItem onClick={toProfile}>Profile</MenuItem>
+			{user.admin && (
+				<MenuItem onClick={toIngredientEdit}>Add Ingredient</MenuItem>
+			)}
 			<MenuItem onClick={logout}>Logout</MenuItem>
 		</Menu>
 	);

@@ -1,5 +1,5 @@
-import { SET_CURRENT_USER, LOGIN_REQUEST } from "../actions/types";
-import isEmpty from "../utils/isEmpty";
+import { SET_CURRENT_USER, LOGIN_REQUEST } from "./types";
+import { isEmpty } from "utils";
 
 const initialState = {
 	user: {},

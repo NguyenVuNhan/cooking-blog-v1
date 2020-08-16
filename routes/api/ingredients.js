@@ -218,7 +218,7 @@ router.post(
 		Ingredient.findOne({ name })
 			.then(ingredient => {
 				if (ingredient) {
-					errors.ingredient = "Meal name already exist";
+					errors.ingredient = "Ingredient name already exist";
 					return res.status(400).json({ errors, success: false });
 				}
 
