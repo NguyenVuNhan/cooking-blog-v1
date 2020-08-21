@@ -1,9 +1,8 @@
 import { fade, makeStyles } from "@material-ui/core/styles";
+import sharedStyles from "sharedStyles";
 
 const useStyles = makeStyles(theme => ({
-	grow: {
-		flexGrow: 1
-	},
+	...sharedStyles(theme),
 	menuButton: {
 		marginRight: theme.spacing(2)
 	},

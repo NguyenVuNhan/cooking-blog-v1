@@ -1,4 +1,4 @@
-import { SET_CURRENT_USER, LOGIN_REQUEST } from "./types";
+import { SET_CURRENT_USER, LOGIN_REQUEST, USER_PROFILE_REQUEST } from "./types";
 import { isEmpty } from "utils";
 
 const initialState = {
@@ -9,6 +9,8 @@ const initialState = {
 
 export default (state = initialState, action) => {
 	switch (action.type) {
+		case USER_PROFILE_REQUEST:
+			return { ...state, loading: true };
 		case LOGIN_REQUEST:
 			return { ...state, loading: true };
 		case SET_CURRENT_USER:

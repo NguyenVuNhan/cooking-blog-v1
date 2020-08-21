@@ -25,10 +25,11 @@ const ProfileMenu = ({ id, anchorEl, onClose }) => {
 	return (
 		<Menu
 			anchorEl={anchorEl}
-			anchorOrigin={{ vertical: "top", horizontal: "right" }}
+			getContentAnchorEl={null}
+			anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+			transformOrigin={{ vertical: "top", horizontal: "center" }}
 			id={id}
 			keepMounted
-			transformOrigin={{ vertical: "top", horizontal: "right" }}
 			open={isOpen}
 			onClose={onClose}
 		>
@@ -40,8 +41,8 @@ const ProfileMenu = ({ id, anchorEl, onClose }) => {
 
 ProfileMenu.propTypes = {
 	id: PropTypes.string.isRequired,
-	anchorEl: PropTypes.object.isRequired,
+	anchorEl: PropTypes.object,
 	onClose: PropTypes.func.isRequired
 };
 
-export default ProfileMenu;
+export default React.memo(ProfileMenu);

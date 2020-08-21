@@ -1,13 +1,17 @@
-import React from "react";
+import React, { lazy } from "react";
 import { Route } from "react-router-dom";
-import Login from "./Login";
-import Register from "./Register";
+import Container from "@material-ui/core/Container";
+
+const Login = lazy(() => import("./Login"));
+const Register = lazy(() => import("./Register"));
 
 const Authentication = () => {
 	return (
 		<React.Fragment>
-			<Route exact path="/login" component={Login} />
-			<Route exact path="/register" component={Register} />
+			<Container maxWidth="sm">
+				<Route exact path="/login" component={Login} />
+				<Route exact path="/register" component={Register} />
+			</Container>
 		</React.Fragment>
 	);
 };

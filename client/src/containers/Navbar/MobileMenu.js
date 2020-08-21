@@ -8,10 +8,11 @@ const MobileMenu = ({ id, anchorEl, onClose, children }) => {
 	return (
 		<Menu
 			anchorEl={anchorEl}
+			getContentAnchorEl={null}
 			anchorOrigin={{ vertical: "top", horizontal: "right" }}
+			transformOrigin={{ vertical: "top", horizontal: "right" }}
 			id={id}
 			keepMounted
-			transformOrigin={{ vertical: "top", horizontal: "right" }}
 			open={isOpen}
 			onClose={onClose}
 		>
@@ -22,8 +23,8 @@ const MobileMenu = ({ id, anchorEl, onClose, children }) => {
 
 MobileMenu.propTypes = {
 	id: PropTypes.string.isRequired,
-	anchorEl: PropTypes.object.isRequired,
+	anchorEl: PropTypes.object,
 	onClose: PropTypes.func.isRequired
 };
 
-export default MobileMenu;
+export default React.memo(MobileMenu);

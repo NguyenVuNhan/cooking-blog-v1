@@ -16,6 +16,7 @@ router.post(
 	passport.authenticate("jwt", { session: false }),
 	upload,
 	(req, res) => {
+		console.log(req);
 		const { errors, isValid } = validateImage(req.file);
 		if (!isValid) {
 			return res.status(400).json({ errors, success: false });

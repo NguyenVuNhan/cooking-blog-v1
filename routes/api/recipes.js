@@ -10,6 +10,7 @@ const { uploadImage, deleteImage } = require("../../services/image-uploader");
 
 // Load models
 const Recipe = require("../../models/Recipe");
+const User = require("../../models/User");
 
 // @route 	GET api/recipes/test
 // @desc  	Tests route
@@ -21,6 +22,7 @@ router.get("/test", (req, res) => res.json({ msg: "recipes works" }));
 // @access	Public
 router.get("/", (req, res) => {
 	Recipe.find({})
+		.select({ "image.link": 1, name: 1, steps: 1 })
 		.populate("user", ["name", "avatar"])
 		.populate("course", ["name", "image.link"])
 		.populate({
@@ -150,7 +152,7 @@ router.delete(
 );
 
 // @route 	PUT api/recipes/:id
-// @desc  	Add new recipe
+// @desc  	Edit recipe
 // @access	Private
 router.put(
 	"/:id",
@@ -243,16 +245,22 @@ router.post(
 				newRecipe
 					.save()
 					.then(savedRecipe =>
+						User.findByIdAndUpdate(
+							req.user.id,
+							{ $push: { recipes: savedRecipe } },
+							{ new: true, useFindAndModify: false }
+						)
+					)
+					.then(updatedUser =>
 						res.json({
-							savedRecipe,
+							updatedUser,
 							success: true
 						})
 					)
 					.catch(err =>
 						res.status(400).json({
 							error: "Unexpected error while save recipe",
-							success: false,
-							err
+							success: false
 						})
 					);
 			})

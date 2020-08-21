@@ -6,7 +6,7 @@ import NotFound from "../NotFound";
 const PrivateRoute = ({ component: Component, adminOnly, ...rest }) => {
 	const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
 	const admin = useSelector(state => state.auth.user.admin);
-	const isPrivate = (isAuthenticated && adminOnly && admin) || !adminOnly;
+	const isPrivate = isAuthenticated && ((adminOnly && admin) || !adminOnly);
 
 	return (
 		<Route

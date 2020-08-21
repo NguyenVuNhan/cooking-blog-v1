@@ -25,7 +25,24 @@ const UserSchema = new Schema({
 	admin: {
 		type: Schema.Types.Boolean,
 		default: false
-	}
+	},
+	bio: {
+		type: Schema.Types.String,
+		required: false,
+		default: "Tell us your story"
+	},
+	recipes: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: "recipes"
+		}
+	],
+	savedRecipes: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: "recipes"
+		}
+	]
 });
 
 module.exports = user = mongoose.model("users", UserSchema);

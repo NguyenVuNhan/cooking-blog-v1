@@ -7,7 +7,7 @@ export default (state = initialState, action) => {
 		case CLEAR_ERRORS:
 			return {};
 		case SET_ERRORS:
-			return action.payload.errors;
+			return { ...action.payload.errors };
 		default:
 			return state;
 	}

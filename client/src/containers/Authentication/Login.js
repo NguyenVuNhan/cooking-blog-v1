@@ -43,7 +43,7 @@ const Login = () => {
 							fullWidth
 							inputRef={register}
 							name="email"
-							placeholder="Email Address"
+							label="Email Address"
 							type="email"
 							variant="outlined"
 							error={!isEmpty(errors.email)}
@@ -57,7 +57,7 @@ const Login = () => {
 							fullWidth
 							inputRef={register}
 							name="password"
-							placeholder="Password"
+							label="Password"
 							variant="outlined"
 							error={!isEmpty(errors.password)}
 							type="password"

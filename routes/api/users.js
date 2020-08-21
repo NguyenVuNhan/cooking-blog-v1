@@ -11,6 +11,7 @@ const validateRegisterInput = require("../../validations/userRegister");
 const validateLoginInput = require("../../validations/userLogin");
 const validatePasswordChangeInput = require("../../validations/userPasswordChange");
 const validateEmailChangeInput = require("../../validations/userEmailChange");
+const validateBioChangeInput = require("../../validations/userBioChange");
 
 // Load models
 const User = require("../../models/User");
@@ -41,6 +42,28 @@ router.get("/", (req, res) => {
 			})
 		);
 });
+
+// @route 	GET api/users/current
+// @desc  	Return current user
+// @access	Private
+router.get(
+	"/current",
+	passport.authenticate("jwt", { session: false }),
+	(req, res) => {
+		User.findById(req.user.id)
+			.populate("recipes", ["name", "duration", "image.link"])
+			.populate("savedRecipes", ["name", "duration", "image.link"])
+			.then(user => {
+				if (!user) {
+					return res.status(404).json({
+						error: "User Not Found",
+						success: false
+					});
+				}
+				res.json({ user, success: true });
+			});
+	}
+);
 
 // @route 	GET api/users/recipes?id=&name=&page=&limit=
 // @desc  	Get current user recipes by id or name
@@ -78,14 +101,71 @@ router.get("/recipes", (req, res) => {
 		);
 });
 
-// @route 	POST api/users/email
+// @route 	PUT api/users/savedRecipes
+// @desc  	Add saved of current user
+// @access	Private
+router.put(
+	"/savedRecipes",
+	passport.authenticate("jwt", { session: false }),
+	(req, res) => {
+		const { savedRecipes } = req.body;
+
+		User.findByIdAndUpdate(
+			req.user.id,
+			{ $push: { savedRecipes } },
+			{ new: true, useFindAndModify: false }
+		)
+			.then(updatedUser => {
+				res.json({ updatedUser, success: true });
+			})
+			.catch(err =>
+				res.status(404).json({
+					error: "Unexpected error when update user email",
+					success: false
+				})
+			);
+	}
+);
+
+// @route 	PUT api/users/bio
+// @desc  	Change bio of current user
+// @access	Private
+router.put(
+	"/bio",
+	passport.authenticate("jwt", { session: false }),
+	(req, res) => {
+		const { bio } = req.body;
+		const { errors, isValid } = validateBioChangeInput(req.body);
+
+		if (!isValid) {
+			return res.status(400).json({ errors, success: false });
+		}
+
+		User.findByIdAndUpdate(
+			req.user.id,
+			{ $set: { bio } },
+			{ new: true, useFindAndModify: false }
+		)
+			.then(updatedUser => {
+				res.json({ updatedUser, success: true });
+			})
+			.catch(err =>
+				res.status(404).json({
+					error: "Unexpected error when update user email",
+					success: false
+				})
+			);
+	}
+);
+
+// @route 	PUT api/users/email
 // @desc  	Change email of current user
 // @access	Private
 router.put(
 	"/email",
 	passport.authenticate("jwt", { session: false }),
 	(req, res) => {
-		const { password, email } = req.body;
+		const { email } = req.body;
 		const { errors, isValid } = validateEmailChangeInput(req.body);
 
 		if (!isValid) {
@@ -109,7 +189,7 @@ router.put(
 	}
 );
 
-// @route 	POST api/users/password
+// @route 	PUT api/users/password
 // @desc  	Change password of current user
 // @access	Private
 router.put(
@@ -156,40 +236,6 @@ router.put(
 		});
 	}
 );
-
-// @route 	DELETE api/users
-// @desc  	Delete current user
-// @access	Private
-router.delete(
-	"/",
-	passport.authenticate("jwt", { session: false }),
-	(req, res) => {
-		User.findByIdAndRemove(req.user.id, { useFindAndModify: false })
-			.then(deletedUser => res.json({ deletedUser, success: true }))
-			.catch(err =>
-				res.status(404).json({
-					error: "Unable to find this user",
-					success: false
-				})
-			);
-	}
-);
-
-// @route 	GET api/users/current
-// @desc  	Return current user
-// @access	Private
-router.get(
-	"/current",
-	passport.authenticate("jwt", { session: false }),
-	(req, res) => {
-		res.json({
-			id: req.user.id,
-			name: req.user.name,
-			email: req.user.email
-		});
-	}
-);
-
 // @route 	POST api/users/login
 // @desc  	Login user
 // @access	Public
@@ -287,5 +333,49 @@ router.post("/register", (req, res) => {
 		}
 	});
 });
+
+// @route 	DELETE api/users
+// @desc  	Delete current user
+// @access	Private
+router.delete(
+	"/",
+	passport.authenticate("jwt", { session: false }),
+	(req, res) => {
+		User.findByIdAndRemove(req.user.id, { useFindAndModify: false })
+			.then(deletedUser => res.json({ deletedUser, success: true }))
+			.catch(err =>
+				res.status(404).json({
+					error: "Unable to find this user",
+					success: false
+				})
+			);
+	}
+);
+
+// @route 	DELETE api/users/savedRecipes/:id
+// @desc  	Remove a saved recipe of current user
+// @access	Private
+router.delete(
+	"/savedRecipes/:id",
+	passport.authenticate("jwt", { session: false }),
+	(req, res) => {
+		const savedRecipes = req.params.id;
+
+		User.findByIdAndUpdate(
+			req.user.id,
+			{ $pull: { savedRecipes } },
+			{ new: true, useFindAndModify: false }
+		)
+			.then(updatedUser => {
+				res.json({ updatedUser, success: true });
+			})
+			.catch(err =>
+				res.status(404).json({
+					error: "Unexpected error when update user email",
+					success: false
+				})
+			);
+	}
+);
 
 module.exports = router;
