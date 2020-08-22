@@ -141,7 +141,7 @@ const EditRecipe = ({ actionType, open, onClose, recipe }) => {
 									}
 								>
 									{courses.map((course, i) => (
-										<option key={i} value={course.name}>
+										<option key={i} value={course._id}>
 											{course.name}
 										</option>
 									))}

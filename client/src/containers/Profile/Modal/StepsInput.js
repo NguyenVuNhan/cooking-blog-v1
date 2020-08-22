@@ -11,15 +11,24 @@ import DeleteIcon from "@material-ui/icons/Delete";
 
 import ImageButton from "components/ImageButton";
 
+const CustomArrow = ({ onClick, side }) => {
+	return (
+		<button
+			className={`react-multiple-carousel__arrow react-multiple-carousel__arrow--${side}`}
+			onClick={() => onClick()}
+		/>
+	);
+};
+
 const StepsInput = ({ control, register }) => {
-	const { prepend, remove, fields } = useFieldArray({
+	const { append, remove, fields } = useFieldArray({
 		control,
 		keyName: "stepsId",
 		name: "steps"
 	});
 
 	const newStep = () => ({
-		duration: 1,
+		duration: 0,
 		description: "",
 		image: null
 	});
@@ -30,13 +39,15 @@ const StepsInput = ({ control, register }) => {
 				<Button
 					color="primary"
 					variant="contained"
-					onClick={() => prepend(newStep())}
+					onClick={() => append(newStep())}
 				>
 					Add step
 				</Button>
 			</Grid>
 			<Carousel
 				autoPlay={false}
+				customRightArrow={<CustomArrow side="right" />}
+				customLeftArrow={<CustomArrow side="left" />}
 				responsive={{
 					any: {
 						breakpoint: { max: 4000, min: 0 },
@@ -116,6 +127,7 @@ const StepsInput = ({ control, register }) => {
 							<Grid item xs={12}>
 								<TextField
 									multiline
+									fullWidth
 									variant="outlined"
 									id={`steps[${index}].description`}
 									name={`steps[${index}].description`}
