@@ -2,7 +2,6 @@ import React from "react";
 import Box from "@material-ui/core/Box";
 import Carousel from "react-multi-carousel";
 
-import "react-multi-carousel/lib/styles.css";
 import useStyles from "./styles";
 
 const CarouselBubble = () => {

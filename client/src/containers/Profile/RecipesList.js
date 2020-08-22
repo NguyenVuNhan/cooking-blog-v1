@@ -16,7 +16,7 @@ import { actions as coursesAction } from "reducers/courses";
 import imgurUrlModifier from "utils/imgurUrlModifier";
 import useStyles from "./styles";
 
-const RecipeAction = lazy(() => import("./RecipeAction"));
+const Modal = lazy(() => import("./Modal"));
 
 const RecipesList = ({ recipes, showAddmore }) => {
 	const classes = useStyles();
@@ -107,7 +107,7 @@ const RecipesList = ({ recipes, showAddmore }) => {
 				)}
 			</Grid>
 			{showAddmore && (
-				<RecipeAction open={modalOpen} onClose={handleModalClose} />
+				<Modal open={modalOpen} onClose={handleModalClose} />
 			)}
 		</React.Fragment>
 	);
