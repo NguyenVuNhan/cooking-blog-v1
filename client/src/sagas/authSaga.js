@@ -1,11 +1,15 @@
 import jwt_decode from "jwt-decode";
 import { take, call, put, fork, all } from "redux-saga/effects";
 
-import { types as authTypes, actions as authActions } from "reducers/auth";
-import { actions as errorActions } from "reducers/errors";
-import { setAuthToken, clearAuthToken } from "utils";
+import {
+	types as recipesType,
+	actions as recipesAction
+} from "../reducers/recipes";
+import { types as authTypes, actions as authActions } from "../reducers/auth";
+import { actions as errorActions } from "../reducers/errors";
+import { setAuthToken, clearAuthToken } from "../utils";
 
-export function* loginFlow() {
+function* loginFlow() {
 	while (true) {
 		const { user } = yield take(authTypes.LOGIN_REQUEST);
 		try {
@@ -25,7 +29,7 @@ export function* loginFlow() {
 	}
 }
 
-export function* registerFlow() {
+function* registerFlow() {
 	while (true) {
 		const { user, history } = yield take(authTypes.REGISTER_REQUEST);
 		try {
@@ -39,7 +43,7 @@ export function* registerFlow() {
 	}
 }
 
-export function* logoutFlow() {
+function* logoutFlow() {
 	while (true) {
 		const { history } = yield take(authTypes.LOGOUT_REQUEST);
 		clearAuthToken();
@@ -49,13 +53,15 @@ export function* logoutFlow() {
 	}
 }
 
-export function* getProfileFlow() {
+function* getProfileFlow() {
 	while (true) {
 		yield take(authTypes.USER_PROFILE_REQUEST);
 		try {
 			const { data } = yield call(authActions.getUserProfile);
-			if (typeof data === "object" && data !== null)
+			if (typeof data === "object" && data !== null) {
 				yield put(authActions.setCurrentUser(data.user));
+				yield put(recipesAction.setRecipes(data.user.recipes));
+			}
 		} catch (err) {
 			yield put(errorActions.setErrors(err.response.data));
 		}

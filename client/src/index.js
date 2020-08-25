@@ -9,7 +9,7 @@ import { actions as authActions } from "reducers/auth";
 import { setAuthToken, clearAuthToken } from "utils";
 import rootReducer from "reducers";
 import rootSaga from "sagas";
-import App from "./containers/App";
+import App from "./App";
 import "react-multi-carousel/lib/styles.css";
 import "./index.css";
 import * as serviceWorker from "./serviceWorker";

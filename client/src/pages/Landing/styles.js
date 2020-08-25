@@ -65,10 +65,6 @@ const useStyles = makeStyles(theme => ({
 		display: "block",
 		textAlign: "center"
 	},
-	scroll: {
-		// overflow: "hidden",
-		// whiteSpace: "nowrap"
-	},
 	bubble: {
 		height: "100px",
 		width: "100px",

@@ -1,35 +1,32 @@
-import React, { useState, lazy } from "react";
-import { useDispatch } from "react-redux";
+import React from "react";
+import { useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
 import ButtonBase from "@material-ui/core/ButtonBase";
+import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
+import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import AccessTimeIcon from "@material-ui/icons/AccessTime";
 
-import { actions as coursesAction } from "reducers/courses";
 import imgurUrlModifier from "utils/imgurUrlModifier";
 import useStyles from "./styles";
 
-const Modal = lazy(() => import("./Modal"));
-
 const RecipesList = ({ recipes, showAddmore }) => {
 	const classes = useStyles();
-	const dispatch = useDispatch();
-	const [modalOpen, setModalOpen] = useState(true);
+	const history = useHistory();
 
-	const handleModalOpen = () => {
-		setModalOpen(true);
-		dispatch(coursesAction.getCoursesRequest());
+	const toAddRecipe = () => {
+		history.push("/profile/add-recipe");
 	};
 
-	const handleModalClose = () => {
-		setModalOpen(false);
+	const toEditRecipe = () => {
+		history.push("/profile/edit-recipe");
 	};
 
 	return (
@@ -80,6 +77,23 @@ const RecipesList = ({ recipes, showAddmore }) => {
 									</Grid>{" "}
 								</CardContent>
 							</CardActionArea>
+							<CardActions>
+								<Button
+									variant="contained"
+									size="small"
+									color="primary"
+									onClick={toEditRecipe}
+								>
+									Edit
+								</Button>
+								<Button
+									variant="contained"
+									size="small"
+									className={classes.colorDanger}
+								>
+									Delete
+								</Button>
+							</CardActions>
 						</Card>
 					</Grid>
 				))}
@@ -94,7 +108,7 @@ const RecipesList = ({ recipes, showAddmore }) => {
 						sm={6}
 						xs={12}
 						component={ButtonBase}
-						onClick={handleModalOpen}
+						onClick={toAddRecipe}
 					>
 						<Box
 							border={2}
@@ -106,9 +120,6 @@ const RecipesList = ({ recipes, showAddmore }) => {
 					</Grid>
 				)}
 			</Grid>
-			{showAddmore && (
-				<Modal open={modalOpen} onClose={handleModalClose} />
-			)}
 		</React.Fragment>
 	);
 };

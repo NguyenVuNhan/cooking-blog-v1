@@ -22,6 +22,10 @@ const sharedStyles = theme => ({
 	},
 	my2: {
 		marginTop: theme.spacing(2)
+	},
+	colorDanger: {
+		color: theme.palette.common.white,
+		backgroundColor: "#c62828"
 	}
 });
 
