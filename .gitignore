@@ -5,6 +5,7 @@ package-lock.json
 # production
 build/
 web-build/
+server/views/
 
 # testing
 coverage/
