@@ -4,9 +4,9 @@
   "description": "This Cooking Blog was created to help us to save our own receipe",
   "main": "server.js",
   "scripts": {
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client && mv client/build server/views",
-    "start": "npm start --prefix server",
-    "server": "npm run server --prefix server",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
+    "start": "node server.js",
+    "server": "nodemon server.js",
     "client": "npm start --prefix client",
     "native": "npm start --prefix client-native",
     "dev-web": "concurrently \"npm run server\" \"npm run client\"",
@@ -26,7 +26,27 @@
     "url": "https://github.com/NguyenVuNhan/cooking-blog/issues"
   },
   "homepage": "https://github.com/NguyenVuNhan/cooking-blog#readme",
+  "devDependencies": {
+    "concurrently": "^5.3.0",
+    "nodemon": "^2.0.4"
+  },
   "dependencies": {
-    "concurrently": "^5.3.0"
+    "axios": "^0.19.2",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "gravatar": "^1.8.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.28",
+    "multer": "^1.4.2",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "validator": "^13.1.1"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "client/*",
+      "client-native/*"
+    ]
   }
 }
