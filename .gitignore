@@ -21,6 +21,7 @@ coverage/
 *.orig.*
 
 # misc
+.vscode/
 .DS_Store
 keys.dev.js
 .env.local
