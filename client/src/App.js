@@ -12,32 +12,34 @@ const Register = lazy(() => import("./pages/Register"));
 const Profile = lazy(() => import("./pages/Profile"));
 const AddRecipe = lazy(() => import("./pages/AddRecipe"));
 const EditRecipe = lazy(() => import("./pages/EditRecipe"));
+const ViewRecipe = lazy(() => import("./pages/ViewRecipe"));
 
 function App() {
-	return (
-		<Suspense fallback={<Spinner />}>
-			<Router>
-				<Navbar />
-				<Switch>
-					<Route exact path="/" component={Landing} />
-					<Route exact path="/login" component={Login} />
-					<Route exact path="/register" component={Register} />
-					<PrivateRoute exact path="/profile" component={Profile} />
-					<PrivateRoute
-						exact
-						path="/profile/add-recipe"
-						component={AddRecipe}
-					/>
-					<PrivateRoute
-						exact
-						path="/profile/edit-recipe"
-						component={EditRecipe}
-					/>
-					<Route component={NotFound} />
-				</Switch>
-			</Router>
-		</Suspense>
-	);
+  return (
+    <Suspense fallback={<Spinner />}>
+      <Router>
+        <Navbar />
+        <Switch>
+          <Route exact path="/" component={Landing} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/register" component={Register} />
+          <Route exact path="/profile/view-recipe/:id" component={ViewRecipe} />
+          <PrivateRoute exact path="/profile" component={Profile} />
+          <PrivateRoute
+            exact
+            path="/profile/add-recipe"
+            component={AddRecipe}
+          />
+          <PrivateRoute
+            exact
+            path="/profile/edit-recipe/:id"
+            component={EditRecipe}
+          />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    </Suspense>
+  );
 }
 
 export default App;

@@ -10,13 +10,17 @@ import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import Alert from "@material-ui/lab/Alert";
 
+import { safeRecipe } from "./utils";
 import useStyles from "./styles.js";
 import StepsInput from "./StepsInput";
 import GeneralInput from "./GeneralInput";
 
 const EditRecipe = ({ actionType, recipe, onSubmit }) => {
   const classes = useStyles();
-  const { register, control, handleSubmit } = useForm();
+  safeRecipe(recipe);
+  const { register, control, handleSubmit } = useForm({
+    defaultValues: recipe,
+  });
   const courses = useSelector((state) => state.courses.courses);
   const errors = useSelector((state) => state.errors);
 
@@ -69,6 +73,7 @@ const EditRecipe = ({ actionType, recipe, onSubmit }) => {
           errors={errors}
           courses={courses}
           control={control}
+          image={recipe.tmpImage}
         />
 
         <Grid item xs={12} component={Box} borderBottom={3}></Grid>
@@ -77,7 +82,11 @@ const EditRecipe = ({ actionType, recipe, onSubmit }) => {
             Steps
           </Typography>
         </Grid>
-        <StepsInput control={control} register={register} />
+        <StepsInput
+          control={control}
+          register={register}
+          steps={recipe.steps}
+        />
 
         <Grid item xs={12} component={Box} borderBottom={3}></Grid>
         <Grid

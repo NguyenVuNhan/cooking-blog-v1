@@ -12,39 +12,40 @@ import rootSaga from "sagas";
 import App from "./App";
 import "react-multi-carousel/lib/styles.css";
 import "./index.css";
+import "./_utils.css";
 import * as serviceWorker from "./serviceWorker";
 
 const initialState = {};
 const sagaMiddleware = createSagaMiddleware();
 const middleware = [sagaMiddleware];
 const store = createStore(
-	rootReducer,
-	initialState,
-	compose(
-		applyMiddleware(...middleware),
-		process.env.NODE_ENV === "production"
-			? f => f
-			: window.__REDUX_DEVTOOLS_EXTENSION__ &&
-					window.__REDUX_DEVTOOLS_EXTENSION__()
-	)
+  rootReducer,
+  initialState,
+  compose(
+    applyMiddleware(...middleware),
+    process.env.NODE_ENV === "production"
+      ? (f) => f
+      : window.__REDUX_DEVTOOLS_EXTENSION__ &&
+          window.__REDUX_DEVTOOLS_EXTENSION__()
+  )
 );
 
 if (localStorage.jwtToken) {
-	setAuthToken(localStorage.jwtToken);
-	const decoded = jwt_decode(localStorage.jwtToken);
-	store.dispatch(authActions.setCurrentUser(decoded));
+  setAuthToken(localStorage.jwtToken);
+  const decoded = jwt_decode(localStorage.jwtToken);
+  store.dispatch(authActions.setCurrentUser(decoded));
 
-	const currentTime = Date.now() / 1000;
-	if (currentTime > decoded.exp) {
-		clearAuthToken();
-	}
+  const currentTime = Date.now() / 1000;
+  if (currentTime > decoded.exp) {
+    clearAuthToken();
+  }
 }
 
 ReactDOM.render(
-	<Provider store={store}>
-		<App />
-	</Provider>,
-	document.getElementById("root")
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById("root")
 );
 
 sagaMiddleware.run(rootSaga);
